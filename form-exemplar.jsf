@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template-responsivo.xhtml">
+
+    <ui:define name="conteudo" >
+
+        <f:metadata>
+            <f:viewParam name="dummy" />
+            <f:viewAction action="#{obraBean.configurarForm()}" />
+        </f:metadata>
+
+        <h1 class="biblio-tit-pg">Formulário de Obra</h1>
+
+        <div class="ui-fluid">
+            <h:form id="frm-titulo">
+
+                <p:panelGrid layout="grid" columns="4"
+                             columnClasses="ui-grid-col-2,ui-grid-col-5,ui-grid-col-2,ui-grid-col-3,">
+
+                    <p:outputLabel value="Nome: *" for="nome" />
+                    <p:inputText id="nome" placeholder="Nome do título." value="#{obraBean.titulo.nome}"
+                                 style="text-transform: uppercase;" />
+
+                    <p:outputLabel value="Edição:" for="edicao" />
+                    <p:inputText style="width: 50px;" id="edicao" value="#{obraBean.titulo.edicao}" />
+
+                    <p:outputLabel value="Cód. de barras: *" for="cod" />
+                    <p:inputText id="cod" placeholder="Código de barras." value="#{obraBean.titulo.codBarras}" />
+
+                    <p:outputLabel value="Estoque:" for="estoque"  />
+                    <p:inputText disabled="true" style="width: 50px ;"  value="#{obraBean.titulo.copias.size}" id="estoque" />
+
+                    <p:outputLabel for="area" value="Área: *"  />
+                    <p:selectOneMenu id="area" value="#{obraBean.titulo.areaCon}">
+                        <f:selectItems value="#{obraBean.areas}" itemValue="#{classe}"
+                                       var="classe" itemLabel="#{classe.descricao}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Data: *" for="dt-nasc" />
+                    <p:calendar locale="pt" id="dt-nasc" mask="99-99-9999" pattern="dd-MM-yyyy" effect="fold" value="#{obraBean.titulo.data}" />
+
+                    <p:outputLabel for="cdd" value="CDD:" />
+                    <p:inputText style="width:50%;" id="cdd" value="#{obraBean.titulo.cdd}" />
+
+                    <p:outputLabel for="volume" value="Volume:" />
+                    <p:inputText style="width:20%;" id="volume" value="#{obraBean.titulo.volume}" />
+
+                    <p:outputLabel for="cdu" value="CDU:" />
+                    <p:inputText style="width:50%;" id="cdu" value="#{obraBean.titulo.cdu}" />
+
+                    <p:outputLabel for="disp-status" value="Status:" />
+                    <p:inputText style="width:50%;" id="disp-status" value="{obraBean.titulo.dispStatus}" /> 
+
+                    <p:outputLabel for="isbn" value="ISBN:" />
+                    <p:inputText style="width:80%;" id="isbn" value="#{obraBean.titulo.isbn}" />
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-3, ui-grid-col-5">
+                    <p:outputLabel for="editora" value="Editora: " />
+
+                    <p:commandButton type="button" process="@this" value="Adicionar Editora"
+                                     onclick="PF('addEdit').show();" />
+                    <p:inputText id="editora" value="#{obraBean.titulo.editora.nome}" disabled="true" />
+
+                    <p:outputLabel for="idioma" value="Idioma: " />
+
+                    <p:commandButton type="button" process="@this" value="Adicionar Idioma"
+                                     onclick="PF('addLingua').show();" />
+                    <p:inputText id="idioma" value="#{obraBean.titulo.idioma.descricao}" disabled="true" />
+
+                    <p:outputLabel for="autores" value="Autor(es): " />
+
+                    <p:commandButton type="button" process="@this" value="Adicionar Autor"
+                                     onclick="PF('addAutor').show();" />
+
+                    <p:dataTable value="#{obraBean.titulo.autores}" var="autor" id="autores"
+                                 reflow="true" rows="10" paginator="true" paginatorPosition="bottom"
+                                 emptyMessage="Sem Autor" style="font-size: 0.50em">
+
+                        <p:column headerText="NOME" width="" >
+                            <h:outputText value="#{autor.nome}" />
+                        </p:column>
+                        <p:column headerText="AÇÂO">
+                            <p:commandButton process="@this" update=":frm-titulo:editora" value="MENOS" />
+                        </p:column>
+                    </p:dataTable>
+
+
+                    <p:outputLabel for="tags" value="Marcadores: " />
+
+                    <p:commandButton type="button" process="@this" value="Adicionar Marcador"
+                                     onclick="PF('addTag').show();" />
+
+                    <p:dataTable value="#{obraBean.titulo.marcadores}" var="tag" id="tags"
+                                 reflow="true" rows="10" paginator="true" paginatorPosition="bottom"
+                                 emptyMessage="Sem marcador." style="font-size: 0.50em">
+
+                        <p:column headerText="NOME" width="" >
+                            <h:outputText value="#{tag.descricao}" />
+                        </p:column>
+                        <p:column headerText="AÇÂO">
+                            <p:commandButton process="@this" update=":frm-titulo:editora" value="MENOS" />
+                        </p:column>
+                    </p:dataTable>
+
+
+                    <p:outputLabel value="Observação:" for="obs" />
+                    <p:outputLabel />
+                    <p:inputTextarea rows="5" id="obs" value="#{obraBean.titulo.observacao}" />
+
+                </p:panelGrid>
+                <p:commandButton process=":frm-titulo:" value="Salvar" update=":frm-titulo: "
+                                 actionListener="#{obraBean.salvar()}" />
+
+                <p:messages autoUpdate="true"/>
+            </h:form>
+
+        </div>
+
+
+        <!-- dialogs -->
+        <p:dialog styleClass="biblio-dialog-adiciona" resizable="false" draggable="false" widgetVar="addEdit"
+                  modal="true" header="Editoras" responsive="true"
+                  footer="Selecione uma editora.">
+            <ui:include src="/WEB-INF/fragments/titulo/titulo-adiciona-editora.xhtml" />
+        </p:dialog>
+        <p:dialog styleClass="biblio-dialog-adiciona" resizable="false" draggable="true"  widgetVar="addLingua"
+                  modal="true"  header="Editoras" responsive="true"
+                  footer="Selecione uma editora.">
+            <ui:include src="/WEB-INF/fragments/titulo/titulo-adiciona-idioma.xhtml" />
+        </p:dialog>
+        <p:dialog styleClass="biblio-dialog-adiciona" resizable="false" draggable="false" widgetVar="addAutor"
+                  modal="true" header="Autores" responsive="true"
+                  footer="Selecione uma editora.">
+            <ui:include src="/WEB-INF/fragments/titulo/titulo-adiciona-autor.xhtml" />
+        </p:dialog>
+        <p:dialog styleClass="biblio-dialog-adiciona" resizable="false" draggable="false" widgetVar="addTag"
+                  modal="true" header="Marcadores" responsive="true"
+                  footer="Selecione uma tag.">
+            <ui:include src="/WEB-INF/fragments/titulo/titulo-adiciona-tags.xhtml" />
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
